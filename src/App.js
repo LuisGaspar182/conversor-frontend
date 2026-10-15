@@ -208,7 +208,7 @@ function App() {
           setErro(null);
         }}
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton={!carregando}>
           <Modal.Title>Modal heading</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -221,6 +221,7 @@ function App() {
                 value={novaMoeda}
                 onChange={(e) => setNovaMoeda(e.target.value)}
                 required
+                disabled={carregando}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -231,6 +232,7 @@ function App() {
                 value={novaMoedaCotacao}
                 onChange={(e) => setNovaMoedaCotacao(e.target.value)}
                 required
+                disabled={carregando}
               />
               <Form.Text muted>
                 {" "}
@@ -239,6 +241,12 @@ function App() {
             </Form.Group>
           </Form>
         </Modal.Body>
+        {carregando && (
+          <div className="text-center">
+            <div className="spinner-border text-primary" role="status"></div>
+            <p>Carregando...</p>
+          </div>
+        )}
         {erro && <div className="alert alert-danger">{erro}</div>}
         <Modal.Footer>
           <Button
@@ -250,7 +258,11 @@ function App() {
           >
             Fechar
           </Button>
-          <Button variant="primary" onClick={handleAdicionarCotacao}>
+          <Button
+            variant="primary"
+            onClick={handleAdicionarCotacao}
+            disabled={carregando}
+          >
             Salvar Cotação
           </Button>
         </Modal.Footer>
@@ -263,10 +275,17 @@ function App() {
           setEditarMoeda("");
         }}
       >
-        <Modal.Header closeButton>
+        {/* se carregando for true desabilitar o close button */}
+        <Modal.Header closeButton={!carregando}>
           <Modal.Title>Editar Conversões</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {carregando && (
+            <div className="text-center">
+              <div className="spinner-border text-primary" role="status"></div>
+              <p>Carregando...</p>
+            </div>
+          )}
           {erro && <div className="alert alert-danger">{erro}</div>}
           <Table striped bordered hover>
             <thead>
@@ -305,6 +324,7 @@ function App() {
                             setEditarMoeda(taxas[moeda]);
                             setNewCotacao(taxas[moeda]);
                           }}
+                          disabled={carregando}
                         >
                           Editar
                         </Button>
@@ -329,6 +349,7 @@ function App() {
                                 );
                               });
                           }}
+                          disabled={carregando}
                         >
                           Salvar
                         </Button>
@@ -356,6 +377,7 @@ function App() {
                               });
                           }
                         }}
+                        disabled={carregando}
                       >
                         Remover
                       </Button>
@@ -369,7 +391,7 @@ function App() {
       </Modal>
 
       {/* Exibição do estado de "carregando" exigido pelo desafio */}
-      {carregando && (
+      {carregando && !conversoes && !gerirConversoes && (
         <div className="text-center">
           <div className="spinner-border text-primary" role="status"></div>
           <p>Carregando...</p>
