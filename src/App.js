@@ -37,6 +37,7 @@ function App() {
   const [taxas, setTaxas] = useState({});
   const [editarMoeda, setEditarMoeda] = useState("");
   const [newCotacao, setNewCotacao] = useState("");
+  const [carregandoInicial, setCarregandoInicial] = useState(true);
 
   // Função para buscar o histórico ao carregar a página
   const carregarHistorico = async () => {
@@ -44,7 +45,6 @@ function App() {
       const response = await axios.get(`${API_URL}/conversoes`);
       setHistorico(response.data);
     } catch (error) {
-      // O FastAPI retorna 404 se o histórico estiver vazio, podemos ignorar na UI inicial
       if (error.response && error.response.status !== 404) {
         console.error("Erro ao buscar histórico:", error);
       }
@@ -62,10 +62,29 @@ function App() {
   };
 
   useEffect(() => {
-    carregarHistorico();
-    carregarModas();
+    const carregarDadosIniciais = async () => {
+      setCarregandoInicial(true);
+      await Promise.all([carregarHistorico(), carregarModas()]);
+      setCarregandoInicial(false);
+    };
+    carregarDadosIniciais();
   }, []);
 
+  // Se ainda estiver carregando os dados do banco/API, mostra apenas o loading na tela
+  if (carregandoInicial) {
+    return (
+      <div className="container mt-5 text-center">
+        <div
+          className="spinner-border text-primary"
+          role="status"
+          style={{ width: "3rem", height: "3rem" }}
+        >
+          <span className="visually-hidden">Carregando...</span>
+        </div>
+        <h4 className="mt-3">Conectando ao servidor e carregando dados...</h4>
+      </div>
+    );
+  }
   // Função para lidar com o clique do botão "Converter"
   const handleConverter = async (e) => {
     e.preventDefault();
