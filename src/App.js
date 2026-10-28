@@ -139,9 +139,6 @@ function App() {
   return (
     <div className="container mt-5">
       <h1 className="text-center mb-4">Conversor de Moedas</h1>
-      {/* Aqui você vai inserir o seu formulário usando Bootstrap */}
-      {/* Utilize os estados: valor, moedaOrigem, moedaDestino */}
-      {/* Lembre-se de vincular o botão "Converter" à função handleConverter */}
       <Form onSubmit={handleConverter}>
         <div className="row justify-content-center">
           <div className="col-md-5">
